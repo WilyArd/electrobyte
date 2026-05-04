@@ -1,4 +1,4 @@
-import { Category } from "@prisma/client";
+// Category utilities for ElectroByte
 
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -15,8 +15,8 @@ export function formatDate(date: Date): string {
   }).format(new Date(date));
 }
 
-export function getCategoryLabel(category: Category): string {
-  const labels: Record<Category, string> = {
+export function getCategoryLabel(category: string): string {
+  const labels: Record<string, string> = {
     LAPTOPS: "Laptops",
     DESKTOPS: "Desktops",
     PERIPHERALS: "Peripherals",
@@ -25,11 +25,11 @@ export function getCategoryLabel(category: Category): string {
     STORAGE: "Storage",
     ACCESSORIES: "Accessories",
   };
-  return labels[category];
+  return labels[category] || category;
 }
 
-export function getCategoryIcon(category: Category): string {
-  const icons: Record<Category, string> = {
+export function getCategoryIcon(category: string): string {
+  const icons: Record<string, string> = {
     LAPTOPS: "💻",
     DESKTOPS: "🖥️",
     PERIPHERALS: "⌨️",
@@ -38,7 +38,7 @@ export function getCategoryIcon(category: Category): string {
     STORAGE: "💾",
     ACCESSORIES: "🎧",
   };
-  return icons[category];
+  return icons[category] || "📦";
 }
 
 export function getStockStatus(stock: number): {

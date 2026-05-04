@@ -1,7 +1,7 @@
 import { getProductById, getRelatedProducts } from "@/actions/search";
 import { formatPrice, getCategoryLabel, getStockStatus } from "@/lib/utils";
 import { AddToCartButton } from "@/components/products/AddToCartButton";
-import { Category } from "@prisma/client";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

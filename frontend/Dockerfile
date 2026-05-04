@@ -10,8 +10,10 @@ WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json* ./
 COPY prisma ./prisma/
 
-RUN npm ci --ignore-scripts
-RUN npx prisma generate
+RUN npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set fetch-retries 5 && \
+    npm install
 
 # Stage 2: Build the application
 FROM node:24.15.0-alpine AS builder

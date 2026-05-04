@@ -1,14 +1,14 @@
 "use client";
 
 import { updateProduct } from "@/actions/products";
-import { Category } from "@prisma/client";
+
 import { getCategoryLabel } from "@/lib/utils";
 import Link from "next/link";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-const categories: Category[] = [
+const categories: string[] = [
   "LAPTOPS", "DESKTOPS", "PERIPHERALS", "COMPONENTS", "NETWORKING", "STORAGE", "ACCESSORIES",
 ];
 
@@ -18,7 +18,7 @@ type Product = {
   description: string;
   price: number;
   image: string;
-  category: Category;
+  category: string;
   stock: number;
   featured: boolean;
 };

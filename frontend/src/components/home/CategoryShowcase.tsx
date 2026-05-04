@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Category } from "@prisma/client";
+
 import { getCategoryLabel, getCategoryIcon } from "@/lib/utils";
 
-const categories: Category[] = [
+const categories: string[] = [
   "LAPTOPS",
   "DESKTOPS",
   "PERIPHERALS",

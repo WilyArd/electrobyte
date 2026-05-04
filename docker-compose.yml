@@ -1,30 +1,89 @@
 # ============================================
-# ElectroByte — Docker Compose Stack
-# PostgreSQL Database Only
+# ElectroByte — Multi-Service Docker Compose
 # ============================================
+
+networks:
+  electrobyte-net:
+    driver: bridge
 
 services:
   # ─────────────────────────────────────────────
-  # PostgreSQL Database
+  # 1. Backend (Elysia.js + Bun)
   # ─────────────────────────────────────────────
-  db:
-    image: postgres:16-alpine
-    container_name: electrobyte-db
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: electrobyte-backend
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: electrobyte
-      POSTGRES_PASSWORD: electrobyte_admin20
-      POSTGRES_DB: electrobyte
+    networks:
+      - electrobyte-net
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U electrobyte -d electrobyte"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      - "4000:4000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+
+  # ─────────────────────────────────────────────
+  # 2. Frontend Storefront (Next.js)
+  # ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: electrobyte-frontend
+    restart: unless-stopped
+    networks:
+      - electrobyte-net
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Fix NextAuth UntrustedHost error when running behind Docker/proxy
+      - AUTH_TRUST_HOST=true
+      # Use Docker service name instead of localhost for backend communication
+      - BACKEND_URL=http://backend:4000
+    depends_on:
+      - backend
+
+  # ─────────────────────────────────────────────
+  # 3. Admin Panel (Vite + React)
+  # ─────────────────────────────────────────────
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: electrobyte-admin
+    restart: unless-stopped
+    networks:
+      - electrobyte-net
+    ports:
+      - "5000:80"
+    depends_on:
+      - backend
+
+  # ─────────────────────────────────────────────
+  # Local Database (Optional - Commented out)
+  # ─────────────────────────────────────────────
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: electrobyte-db
+  #   restart: unless-stopped
+  #   networks:
+  #     - electrobyte-net
+  #   environment:
+  #     POSTGRES_USER: electrobyte
+  #     POSTGRES_PASSWORD: electrobyte_admin20
+  #     POSTGRES_DB: electrobyte
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

@@ -1,10 +1,10 @@
 import { searchProducts } from "@/actions/search";
 import { formatPrice, getCategoryLabel } from "@/lib/utils";
-import { Category } from "@prisma/client";
+
 import Link from "next/link";
 import { AddToCartButton } from "@/components/products/AddToCartButton";
 
-const categories: Category[] = [
+const categories: string[] = [
   "LAPTOPS", "DESKTOPS", "PERIPHERALS", "COMPONENTS", "NETWORKING", "STORAGE", "ACCESSORIES",
 ];
 
@@ -39,7 +39,7 @@ export default async function ProductsPage({
         <div className="mb-8">
           <h1 className="font-heading text-3xl sm:text-4xl font-bold mb-2">
             {category
-              ? getCategoryLabel(category as Category)
+              ? getCategoryLabel(category)
               : query
                 ? `Results for "${query}"`
                 : "All Products"}
