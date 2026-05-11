@@ -1,9 +1,9 @@
 "use client";
 
 import { removeFromCart, updateCartQuantity } from "@/actions/cart";
-import { formatPrice } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { useTranslation } from "@/contexts/I18nContext";
 
 type CartItemType = {
   id: string;
@@ -21,6 +21,7 @@ type CartItemType = {
 export function CartItemRow({ item }: { item: CartItemType }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { formatCurrency } = useTranslation();
 
   const handleUpdateQuantity = (newQty: number) => {
     startTransition(async () => {
@@ -79,7 +80,7 @@ export function CartItemRow({ item }: { item: CartItemType }) {
           {/* Price & Remove */}
           <div className="flex items-center gap-4">
             <span className="font-heading font-bold gradient-text">
-              {formatPrice(item.product.price * item.quantity)}
+              {formatCurrency(item.product.price * item.quantity)}
             </span>
             <button
               onClick={handleRemove}

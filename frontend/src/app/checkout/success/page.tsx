@@ -48,7 +48,7 @@ export default async function CheckoutSuccessPage({
               </p>
               <p className="text-sm text-navy-400 dark:text-navy-300 mb-1">Items</p>
               <div className="space-y-2">
-                {order.items.map((item) => (
+                {order.items.map((item: (typeof order.items)[number]) => (
                   <div key={item.id} className="flex items-center gap-2 text-sm">
                     <span>{item.quantity}x</span>
                     <span className="truncate">{item.product.name}</span>

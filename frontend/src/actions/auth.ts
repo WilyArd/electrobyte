@@ -3,7 +3,7 @@
 import { signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:4001";
 
 export async function register(
   _prevState: { error?: string; success?: boolean } | undefined,
@@ -16,7 +16,7 @@ export async function register(
   };
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
+    const res = await fetch(`${AUTH_SERVICE_URL}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(rawData),

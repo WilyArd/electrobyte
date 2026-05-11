@@ -1,0 +1,9 @@
+{
+  "name": "@electrobyte/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities for ElectroByte microservices",
+  "private": true,
+  "dependencies": {
+    "minio": "^8.0.5"
+  }
+}

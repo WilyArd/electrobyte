@@ -1,8 +1,8 @@
 "use client";
 
-import { processCheckout } from "@/actions/checkout";
+import { processCheckout, validateCoupon } from "@/actions/checkout";
 import { formatPrice } from "@/lib/utils";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 type CheckoutFormProps = {
   subtotal: number;
@@ -16,10 +16,41 @@ export default function CheckoutForm({
   subtotal,
   tax,
   shipping,
-  total,
+  total: initialTotal,
   itemCount,
 }: CheckoutFormProps) {
   const [state, formAction, isPending] = useActionState(processCheckout, undefined);
+  
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setIsValidatingCoupon(true);
+    setCouponError("");
+
+    const result = await validateCoupon(couponCode, subtotal);
+    
+    if (result && "error" in result && result.error) {
+      setCouponError(result.error);
+      setAppliedCoupon(null);
+    } else if (result && "discount" in result) {
+      setAppliedCoupon({ code: result.code, discount: result.discount });
+      setCouponCode("");
+    }
+    
+    setIsValidatingCoupon(false);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+  };
+
+  const currentTotal = appliedCoupon 
+    ? Math.max(0, initialTotal - appliedCoupon.discount)
+    : initialTotal;
 
   return (
     <div className="grid lg:grid-cols-3 gap-8">
@@ -143,10 +174,13 @@ export default function CheckoutForm({
                 </>
               ) : (
                 <>
-                  🔒 Place Order — {formatPrice(total)}
+                  🔒 Place Order — {formatPrice(currentTotal)}
                 </>
               )}
             </button>
+            {appliedCoupon && (
+              <input type="hidden" name="couponCode" value={appliedCoupon.code} />
+            )}
           </form>
         </div>
       </div>
@@ -170,12 +204,64 @@ export default function CheckoutForm({
                 {shipping === 0 ? "Free" : formatPrice(shipping)}
               </span>
             </div>
+            {appliedCoupon && (
+              <div className="flex justify-between text-sm text-green-500">
+                <span>Discount ({appliedCoupon.code})</span>
+                <span className="font-medium">-{formatPrice(appliedCoupon.discount)}</span>
+              </div>
+            )}
           </div>
+
+          {/* Coupon Code Input */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium mb-3">Have a coupon code?</h3>
+            {appliedCoupon ? (
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm font-medium text-green-500">{appliedCoupon.code} Applied</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveCoupon}
+                  className="text-xs text-navy-400 hover:text-danger-500 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter code"
+                    className="input-field py-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    disabled={isValidatingCoupon || !couponCode}
+                    className="btn-secondary whitespace-nowrap px-4 py-2"
+                  >
+                    {isValidatingCoupon ? "Applying..." : "Apply"}
+                  </button>
+                </div>
+                {couponError && (
+                  <p className="text-xs text-danger-500 mt-2">{couponError}</p>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="border-t border-primary-100/10 dark:border-navy-500/30 pt-4">
             <div className="flex justify-between">
               <span className="font-heading font-bold text-lg">Total</span>
               <span className="font-heading font-bold text-lg gradient-text">
-                {formatPrice(total)}
+                {formatPrice(currentTotal)}
               </span>
             </div>
           </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { useTranslation } from "@/contexts/I18nContext";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -11,6 +12,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -44,17 +46,17 @@ export function Navbar() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/products">Products</NavLink>
+            <NavLink href="/">{t("nav.home")}</NavLink>
+            <NavLink href="/products">{t("nav.products")}</NavLink>
             <NavLink href="/cart">
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                 </svg>
-                Cart
+                {t("nav.cart")}
               </span>
             </NavLink>
-            {isAdmin && <NavLink href="/admin">Admin</NavLink>}
+            {isAdmin && <NavLink href="/admin">{t("nav.admin")}</NavLink>}
           </div>
 
           {/* Right side actions */}
@@ -100,7 +102,7 @@ export function Navbar() {
                   className="px-4 py-2 text-sm font-medium rounded-xl border border-danger-500/30 text-danger-500 hover:bg-danger-500/10 transition-all duration-300"
                   id="logout-button"
                 >
-                  Logout
+                  {t("nav.logout")}
                 </button>
               </div>
             ) : (
@@ -110,14 +112,14 @@ export function Navbar() {
                   className="px-4 py-2 text-sm font-medium rounded-xl hover:bg-primary-50 dark:hover:bg-navy-600 transition-all duration-300"
                   id="login-link"
                 >
-                  Login
+                  {t("nav.login")}
                 </Link>
                 <Link
                   href="/auth/register"
                   className="btn-primary !px-4 !py-2 text-sm"
                   id="register-link"
                 >
-                  Sign Up
+                  {t("nav.signUp")}
                 </Link>
               </div>
             )}
@@ -146,32 +148,32 @@ export function Navbar() {
         {mobileOpen && (
           <div className="md:hidden animate-slide-down pb-4 border-t border-primary-100/10 dark:border-navy-500/30 mt-2">
             <div className="flex flex-col gap-1 pt-3">
-              <MobileNavLink href="/" onClick={() => setMobileOpen(false)}>Home</MobileNavLink>
-              <MobileNavLink href="/products" onClick={() => setMobileOpen(false)}>Products</MobileNavLink>
-              <MobileNavLink href="/cart" onClick={() => setMobileOpen(false)}>Cart</MobileNavLink>
+              <MobileNavLink href="/" onClick={() => setMobileOpen(false)}>{t("nav.home")}</MobileNavLink>
+              <MobileNavLink href="/products" onClick={() => setMobileOpen(false)}>{t("nav.products")}</MobileNavLink>
+              <MobileNavLink href="/cart" onClick={() => setMobileOpen(false)}>{t("nav.cart")}</MobileNavLink>
               {isAdmin && (
-                <MobileNavLink href="/admin" onClick={() => setMobileOpen(false)}>Admin Dashboard</MobileNavLink>
+                <MobileNavLink href="/admin" onClick={() => setMobileOpen(false)}>{t("nav.admin")}</MobileNavLink>
               )}
               <div className="border-t border-primary-100/10 dark:border-navy-500/30 mt-2 pt-2">
                 {session ? (
                   <>
                     <MobileNavLink href="/profile" onClick={() => setMobileOpen(false)}>
-                      My Profile
+                      {t("nav.myProfile")}
                     </MobileNavLink>
                     <div className="px-4 py-2 text-sm text-navy-400 dark:text-navy-200">
-                      Signed in as {session.user?.name || session.user?.email}
+                      {t("nav.signedInAs")} {session.user?.name || session.user?.email}
                     </div>
                     <button
                       onClick={() => { signOut({ callbackUrl: "/" }); setMobileOpen(false); }}
                       className="w-full text-left px-4 py-2.5 text-sm text-danger-500 hover:bg-danger-500/10 rounded-xl transition-all"
                     >
-                      Logout
+                      {t("nav.logout")}
                     </button>
                   </>
                 ) : (
                   <>
-                    <MobileNavLink href="/auth/login" onClick={() => setMobileOpen(false)}>Login</MobileNavLink>
-                    <MobileNavLink href="/auth/register" onClick={() => setMobileOpen(false)}>Sign Up</MobileNavLink>
+                    <MobileNavLink href="/auth/login" onClick={() => setMobileOpen(false)}>{t("nav.login")}</MobileNavLink>
+                    <MobileNavLink href="/auth/register" onClick={() => setMobileOpen(false)}>{t("nav.signUp")}</MobileNavLink>
                   </>
                 )}
               </div>

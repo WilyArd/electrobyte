@@ -1,0 +1,27 @@
+{
+  "name": "electrobyte",
+  "version": "1.0.0",
+  "description": "ElectroByte adalah platform e-commerce modern, cepat, dan responsif yang dirancang khusus untuk penjualan perangkat keras IT dan elektronik premium seperti PC Gaming, komponen komputer, laptop, dan aksesori.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WilyArd/electrobyte.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WilyArd/electrobyte/issues"
+  },
+  "homepage": "https://github.com/WilyArd/electrobyte#readme",
+  "devDependencies": {
+    "prisma": "^6.19.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
+  }
+}

@@ -1,52 +1,58 @@
-import Link from "next/link";
+"use client";
 
-const footerLinks = {
-  shop: [
-    { label: "Laptops", href: "/products?category=LAPTOPS" },
-    { label: "Desktops", href: "/products?category=DESKTOPS" },
-    { label: "Peripherals", href: "/products?category=PERIPHERALS" },
-    { label: "Components", href: "/products?category=COMPONENTS" },
-    { label: "Networking", href: "/products?category=NETWORKING" },
-    { label: "Storage", href: "/products?category=STORAGE" },
-    { label: "Accessories", href: "/products?category=ACCESSORIES" },
-  ],
-  company: [
-    { label: "About Us", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Press", href: "#" },
-    { label: "Blog", href: "#" },
-  ],
-  support: [
-    { label: "Help Center", href: "#" },
-    { label: "Returns", href: "#" },
-    { label: "Warranty", href: "#" },
-    { label: "Contact Us", href: "#" },
-  ],
-};
+import Link from "next/link";
+import { useTranslation } from "@/contexts/I18nContext";
 
 export function Footer() {
+  const { t } = useTranslation();
+
+  const footerLinks = {
+    shop: [
+      { label: "Laptops", href: "/products?category=LAPTOPS" },
+      { label: "Desktops", href: "/products?category=DESKTOPS" },
+      { label: "Peripherals", href: "/products?category=PERIPHERALS" },
+      { label: "Components", href: "/products?category=COMPONENTS" },
+      { label: "Networking", href: "/products?category=NETWORKING" },
+      { label: "Storage", href: "/products?category=STORAGE" },
+      { label: "Accessories", href: "/products?category=ACCESSORIES" },
+    ],
+    company: [
+      { label: t("footer.company.about"), href: "#" },
+      { label: t("footer.company.careers"), href: "#" },
+      { label: t("footer.company.press"), href: "#" },
+      { label: t("footer.company.blog"), href: "#" },
+    ],
+    support: [
+      { label: t("footer.support.help"), href: "#" },
+      { label: t("footer.support.returns"), href: "#" },
+      { label: t("footer.support.warranty"), href: "#" },
+      { label: t("footer.support.contact"), href: "#" },
+    ],
+  };
+
   return (
-    <footer className="relative mt-auto border-t border-primary-100/10 dark:border-navy-500/30">
+    <footer className="relative mt-auto border-t border-primary-100/10 dark:border-navy-500/30 overflow-hidden">
       {/* Gradient top border */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-500 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+      {/* Subtle background glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40rem] h-[20rem] bg-primary-500/3 rounded-full blur-[120px]" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-14">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2.5 mb-5 group">
+              <div className="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center group-hover:shadow-glow transition-all duration-300">
                 <span className="text-white font-heading font-bold text-lg">E</span>
               </div>
-              <span className="font-heading font-bold text-xl">
+              <span className="font-heading font-bold text-xl tracking-tight">
                 <span className="gradient-text">Electro</span>
                 <span className="text-navy-800 dark:text-white">Byte</span>
               </span>
             </Link>
-            <p className="text-navy-400 dark:text-navy-200 text-sm leading-relaxed max-w-sm mb-6">
-              Your premier destination for cutting-edge electronics and IT hardware.
-              From gaming rigs to enterprise networking, we deliver next-gen technology
-              at competitive prices.
+            <p className="text-navy-400 dark:text-navy-200 text-sm leading-relaxed max-w-sm mb-7">
+              {t("footer.tagline")}
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
@@ -54,7 +60,7 @@ export function Footer() {
                 <a
                   key={social}
                   href="#"
-                  className="w-10 h-10 rounded-xl border border-primary-100/10 dark:border-navy-500/30 flex items-center justify-center hover:border-primary-500/30 hover:bg-primary-500/5 transition-all duration-300 text-navy-400 dark:text-navy-200 hover:text-primary-500"
+                  className="w-10 h-10 rounded-xl border border-primary-100/10 dark:border-navy-500/30 flex items-center justify-center hover:border-primary-500/30 hover:bg-primary-500/5 hover:shadow-glow-sm transition-all duration-300 text-navy-400 dark:text-navy-200 hover:text-primary-500 group"
                   aria-label={social}
                 >
                   <SocialIcon name={social} />
@@ -65,16 +71,13 @@ export function Footer() {
 
           {/* Shop Links */}
           <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-4 text-navy-800 dark:text-white">
-              Shop
+            <h3 className="font-heading font-bold text-sm uppercase tracking-wider mb-5 text-navy-800 dark:text-white">
+              {t("footer.shop")}
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {footerLinks.shop.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200 hover:translate-x-0.5 inline-block">
                     {link.label}
                   </Link>
                 </li>
@@ -84,16 +87,13 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-4 text-navy-800 dark:text-white">
-              Company
+            <h3 className="font-heading font-bold text-sm uppercase tracking-wider mb-5 text-navy-800 dark:text-white">
+              {t("footer.company")}
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200 hover:translate-x-0.5 inline-block">
                     {link.label}
                   </Link>
                 </li>
@@ -103,16 +103,13 @@ export function Footer() {
 
           {/* Support Links */}
           <div>
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wider mb-4 text-navy-800 dark:text-white">
-              Support
+            <h3 className="font-heading font-bold text-sm uppercase tracking-wider mb-5 text-navy-800 dark:text-white">
+              {t("footer.support")}
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
-                  >
+                  <Link href={link.href} className="text-sm text-navy-400 dark:text-navy-200 hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-200 hover:translate-x-0.5 inline-block">
                     {link.label}
                   </Link>
                 </li>
@@ -122,14 +119,16 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-primary-100/10 dark:border-navy-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-14 pt-8 border-t border-primary-100/10 dark:border-navy-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-navy-400 dark:text-navy-300">
-            © {new Date().getFullYear()} ElectroByte. All rights reserved.
+            © {new Date().getFullYear()} ElectroByte. {t("footer.copyright")}
           </p>
           <div className="flex items-center gap-6 text-sm text-navy-400 dark:text-navy-300">
-            <Link href="#" className="hover:text-primary-500 transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-primary-500 transition-colors">Terms</Link>
-            <Link href="#" className="hover:text-primary-500 transition-colors">Cookies</Link>
+            <Link href="#" className="hover:text-primary-500 transition-colors">{t("footer.privacy")}</Link>
+            <span className="w-1 h-1 rounded-full bg-navy-300/40" />
+            <Link href="#" className="hover:text-primary-500 transition-colors">{t("footer.terms")}</Link>
+            <span className="w-1 h-1 rounded-full bg-navy-300/40" />
+            <Link href="#" className="hover:text-primary-500 transition-colors">{t("footer.cookies")}</Link>
           </div>
         </div>
       </div>
@@ -138,7 +137,7 @@ export function Footer() {
 }
 
 function SocialIcon({ name }: { name: string }) {
-  const size = "w-4 h-4";
+  const size = "w-4 h-4 transition-transform group-hover:scale-110";
   switch (name) {
     case "Twitter":
       return (

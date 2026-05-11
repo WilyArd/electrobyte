@@ -1,6 +1,18 @@
 import { auth } from "@/lib/auth";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:4001";
+const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || "http://localhost:4002";
+const CART_SERVICE_URL = process.env.CART_SERVICE_URL || "http://localhost:4003";
+const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || "http://localhost:4004";
+
+export function getServiceUrl(path: string): string {
+  if (path.startsWith("/api/auth") || path.startsWith("/api/user/profile") || path.startsWith("/api/user/avatar")) return AUTH_SERVICE_URL;
+  if (path.startsWith("/api/products") || path.startsWith("/api/wishlist") || path.startsWith("/api/reviews")) return PRODUCT_SERVICE_URL;
+  if (path.startsWith("/api/cart")) return CART_SERVICE_URL;
+  if (path.startsWith("/api/orders") || path.startsWith("/api/user/orders")) return ORDER_SERVICE_URL;
+  // Fallback
+  return AUTH_SERVICE_URL;
+}
 
 /**
  * Fetch helper that automatically adds the JWT token from NextAuth session.
@@ -19,7 +31,8 @@ export async function apiFetch(
     headers.set("Authorization", `Bearer ${session.accessToken}`);
   }
 
-  const url = `${BACKEND_URL}${path}`;
+  const baseUrl = getServiceUrl(path);
+  const url = `${baseUrl}${path}`;
   return fetch(url, {
     ...options,
     headers,

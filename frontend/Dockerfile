@@ -27,6 +27,7 @@ COPY prisma /build/prisma/
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+RUN npx prisma generate --schema=/build/prisma/schema.prisma
 RUN npm run build
 
 # Stage 3: Production runner
@@ -42,16 +43,16 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy the standalone output
-COPY --from=builder /build/frontend/public ./public
+COPY --from=builder /build/frontend/public ./frontend/public
 COPY --from=builder /build/prisma ./prisma
 
 # Set correct permissions for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir -p frontend/.next
+RUN chown nextjs:nodejs frontend/.next
 
 # Copy standalone server and static files
 COPY --from=builder --chown=nextjs:nodejs /build/frontend/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /build/frontend/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /build/frontend/.next/static ./frontend/.next/static
 
 # Copy node_modules for prisma client
 COPY --from=builder --chown=nextjs:nodejs /build/frontend/node_modules/.prisma ./node_modules/.prisma
@@ -68,4 +69,4 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-CMD ["node", "server.js"]
+CMD ["node", "frontend/server.js"]

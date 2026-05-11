@@ -11,11 +11,13 @@ export default async function ProfilePage() {
 
   let profile = null;
   let orders: any[] = [];
+  let paymentMethods: any[] = [];
 
   try {
-    const [profileRes, ordersRes] = await Promise.all([
+    const [profileRes, ordersRes, pmRes] = await Promise.all([
       apiFetch("/api/user/profile"),
       apiFetch("/api/user/orders"),
+      apiFetch("/api/user/payment-methods"),
     ]);
 
     if (profileRes.ok) {
@@ -24,9 +26,12 @@ export default async function ProfilePage() {
     if (ordersRes.ok) {
       orders = await ordersRes.json();
     }
+    if (pmRes.ok) {
+      paymentMethods = await pmRes.json();
+    }
   } catch (e) {
     console.error("Failed to fetch profile data:", e);
   }
 
-  return <ProfileClient session={session} profile={profile} orders={orders} />;
+  return <ProfileClient session={session} profile={profile} orders={orders} paymentMethods={paymentMethods} />;
 }

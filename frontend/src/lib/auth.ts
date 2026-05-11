@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import * as jose from "jose";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:4001";
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || "dev-secret-key-electrobyte-2026";
 
 // Derive signing key using HKDF — matches backend auth middleware exactly
@@ -42,7 +42,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         // Call backend to verify credentials
-        const res = await fetch(`${BACKEND_URL}/api/auth/verify`, {
+        const res = await fetch(`${AUTH_SERVICE_URL}/api/auth/verify`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -70,7 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account }) {
       // For OAuth providers, create/update user in database via backend
       if (account?.provider === "google") {
-        await fetch(`${BACKEND_URL}/api/auth/oauth-user`, {
+        await fetch(`${AUTH_SERVICE_URL}/api/auth/oauth-user`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -84,18 +84,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        // Fetch full user info from backend
+        // Fetch full user info from backend (runs only at login)
         const res = await fetch(
-          `${BACKEND_URL}/api/auth/user/${encodeURIComponent(user.email!)}`,
+          `${AUTH_SERVICE_URL}/api/auth/user/${encodeURIComponent(user.email!)}`,
         );
         if (res.ok) {
           const dbUser = await res.json();
           token.id = dbUser.id;
           token.role = dbUser.role;
         }
-        // Generate a backend-compatible JWT at login time (runs once)
+      }
+
+      // Re-generate backendToken if it's missing OR expired (24h TTL)
+      const needsNewToken =
+        !token.backendToken ||
+        !token.backendTokenExp ||
+        Date.now() / 1000 > (token.backendTokenExp as number) - 300; // refresh 5min before expiry
+
+      if (needsNewToken && token.id) {
         try {
           const signingKey = await getSigningKey();
+          const exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60; // 24h from now
           token.backendToken = await new jose.SignJWT({
             id: token.id,
             email: token.email,
@@ -107,10 +116,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .setIssuedAt()
             .setExpirationTime("24h")
             .sign(signingKey);
+          token.backendTokenExp = exp;
         } catch (e) {
           console.error("Failed to create backend token:", e);
         }
       }
+
       return token;
     },
     async session({ session, token }) {
