@@ -24,13 +24,13 @@ ARG SERVICE_DIR
 # Install shared dependencies
 WORKDIR /app/shared
 COPY services/shared/package.json ./
-RUN bun install
+RUN bun install --no-frozen-lockfile
 
 # Install service dependencies
 WORKDIR /app/service
 COPY ${SERVICE_DIR}/package.json ./
 COPY prisma ./prisma/
-RUN bun install
+RUN bun install --no-frozen-lockfile
 
 # ── builder stage ────────────────────────────
 FROM base AS builder
