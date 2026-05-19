@@ -7,15 +7,18 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
-    "@prisma/client": "^6.4.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "7.8.0",
     "bcryptjs": "^3.0.3",
     "elysia": "latest",
-    "jose": "^6.2.2"
+    "jose": "^6.2.2",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
+    "@types/pg": "^8.20.0",
     "bun-types": "latest",
-    "prisma": "^6.4.1"
+    "prisma": "7.8.0"
   },
   "module": "src/index.js"
 }

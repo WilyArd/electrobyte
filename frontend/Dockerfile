@@ -22,12 +22,12 @@ WORKDIR /build/frontend
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY frontend .
-COPY prisma /build/prisma/
+COPY prisma ./prisma/
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-RUN npx prisma generate --schema=/build/prisma/schema.prisma
+RUN ./node_modules/.bin/prisma generate
 RUN npm run build
 
 # Stage 3: Production runner
@@ -44,7 +44,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copy the standalone output
 COPY --from=builder /build/frontend/public ./frontend/public
-COPY --from=builder /build/prisma ./prisma
+COPY --from=builder /build/frontend/prisma ./prisma
 
 # Set correct permissions for prerender cache
 RUN mkdir -p frontend/.next

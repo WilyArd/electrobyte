@@ -8,13 +8,16 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.3.3",
-    "@prisma/client": "^6.6.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "7.8.0",
     "elysia": "^1.3.5",
     "jose": "^5.9.6",
-    "minio": "^8.0.5"
+    "minio": "^8.0.5",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
-    "prisma": "^6.6.0",
+    "@types/pg": "^8.20.0",
+    "prisma": "7.8.0",
     "typescript": "^5.8.3"
   }
 }
