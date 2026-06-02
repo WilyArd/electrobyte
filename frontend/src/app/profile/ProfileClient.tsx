@@ -20,18 +20,21 @@ export function ProfileClient({ session, profile, orders, paymentMethods = [] }:
   const { update: updateSession } = useSession();
   const user = profile || session?.user;
   const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.image ?? null);
-  const { t, language: contextLanguage, setLanguage } = useTranslation();
+  const { t, language: contextLanguage, setLanguage, currency: contextCurrency, setCurrency, formatCurrency } = useTranslation();
 
   // Settings State
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Sync saved language to context on first load
+  // Sync saved language & currency to context on first load
   useEffect(() => {
     if (profile?.language && profile.language !== contextLanguage) {
       setLanguage(profile.language);
     }
-  }, [profile?.language, setLanguage, contextLanguage]);
+    if (profile?.currency && profile.currency !== contextCurrency) {
+      setCurrency(profile.currency);
+    }
+  }, [profile?.language, profile?.currency, setLanguage, setCurrency, contextLanguage, contextCurrency]);
 
   // Payment Method State
   const [isAddingPayment, setIsAddingPayment] = useState(false);
@@ -217,10 +220,7 @@ export function ProfileClient({ session, profile, orders, paymentMethods = [] }:
           </div>
           <div className="card-glass rounded-xl p-5 text-center">
             <p className="text-3xl font-bold gradient-text">
-              $
-              {orders
-                .reduce((sum: number, o: any) => sum + (o.total || 0), 0)
-                .toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              {formatCurrency(orders.reduce((sum: number, o: any) => sum + (o.total || 0), 0))}
             </p>
             <p className="text-sm text-navy-400 dark:text-navy-200 mt-1">
               {t("profile.totalSpent")}
@@ -399,7 +399,7 @@ export function ProfileClient({ session, profile, orders, paymentMethods = [] }:
                         {order.status}
                       </span>
                       <span className="font-bold">
-                        ${order.total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                        {formatCurrency(order.total)}
                       </span>
                     </div>
                   </div>
@@ -419,7 +419,7 @@ export function ProfileClient({ session, profile, orders, paymentMethods = [] }:
                             {item.product.name}
                           </p>
                           <p className="text-[10px] text-navy-400 dark:text-navy-300">
-                            x{item.quantity} · ${item.price}
+                            x{item.quantity} · {formatCurrency(item.price)}
                           </p>
                         </div>
                       </div>
@@ -467,6 +467,7 @@ export function ProfileClient({ session, profile, orders, paymentMethods = [] }:
         onClose={() => setIsSettingsModalOpen(false)}
         currentLanguage={profile?.language || "en"}
         currentRegion={profile?.region || "US"}
+        currentCurrency={profile?.currency || "USD"}
       />
     </>
   );

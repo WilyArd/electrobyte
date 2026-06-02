@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { useTranslation } from "@/contexts/I18nContext";
+import { updateSettings } from "@/actions/profile";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -12,7 +13,8 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useTranslation();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { t, language, setLanguage, currency, setCurrency } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -79,6 +81,129 @@ export function Navbar() {
                   </svg>
                 )}
               </button>
+            )}
+
+            {/* Language & Settings Toggle */}
+            {mounted && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  className="p-2.5 rounded-xl border border-transparent hover:border-primary-500/20 dark:hover:border-primary-500/20 hover:bg-primary-50 dark:hover:bg-navy-600 transition-all duration-300 flex items-center gap-1.5"
+                  aria-label="Language and currency settings"
+                  id="language-toggle"
+                >
+                  <svg className="w-5 h-5 text-navy-700 dark:text-navy-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                  <span className="text-xs font-bold uppercase text-navy-700 dark:text-navy-200">
+                    {language}
+                  </span>
+                  <span className="text-[10px] px-1 py-0.5 rounded bg-primary-500/10 text-primary-500 font-extrabold uppercase">
+                    {currency}
+                  </span>
+                </button>
+
+                {isSettingsOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsSettingsOpen(false)} />
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl border border-primary-100/20 dark:border-navy-500/30 shadow-2xl p-4 z-20 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      {/* Language Selection */}
+                      <div>
+                        <h4 className="text-xs font-bold text-navy-400 dark:text-navy-300 uppercase tracking-wider mb-2">
+                          {language === "id" ? "Pilih Bahasa" : "Select Language"}
+                        </h4>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {[
+                            { code: "en", label: "EN", flag: "🇺🇸", desc: "English" },
+                            { code: "id", label: "ID", flag: "🇮🇩", desc: "Indonesia" },
+                            { code: "es", label: "ES", flag: "🇪🇸", desc: "Español" },
+                            { code: "fr", label: "FR", flag: "🇫🇷", desc: "Français" },
+                          ].map((lang) => (
+                            <button
+                              key={lang.code}
+                              onClick={() => {
+                                setLanguage(lang.code as any);
+                                setIsSettingsOpen(false);
+                              }}
+                              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium border transition-all duration-300 ${
+                                language === lang.code
+                                  ? "border-primary-500 bg-primary-500/10 text-primary-500 shadow-glow-sm"
+                                  : "border-transparent hover:bg-primary-50/50 dark:hover:bg-navy-800 text-navy-700 dark:text-navy-200"
+                              }`}
+                            >
+                              <span>{lang.flag}</span>
+                              <span>{lang.desc}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-primary-100/10 dark:border-navy-500/20" />
+
+                      {/* Currency Selection */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="text-xs font-bold text-navy-400 dark:text-navy-300 uppercase tracking-wider flex items-center gap-1">
+                            {language === "id" ? "Kurs Mata Uang" : "Currency"}
+                            {!session && (
+                              <svg className="w-3.5 h-3.5 text-warning-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                            )}
+                          </h4>
+                          {!session && (
+                            <span className="text-[10px] font-medium text-warning-500 bg-warning-500/10 px-1.5 py-0.5 rounded">
+                              {language === "id" ? "Perlu Login" : "Auth Required"}
+                            </span>
+                          )}
+                        </div>
+
+                        {session ? (
+                          <div className="grid grid-cols-3 gap-1.5">
+                            {[
+                              { code: "USD", symbol: "$", label: "USD" },
+                              { code: "IDR", symbol: "Rp", label: "IDR" },
+                              { code: "EUR", symbol: "€", label: "EUR" },
+                            ].map((curr) => (
+                              <button
+                                key={curr.code}
+                                onClick={async () => {
+                                  setCurrency(curr.code as any);
+                                  // Update settings in database too!
+                                  const formData = new FormData();
+                                  formData.append("currency", curr.code);
+                                  await updateSettings(null, formData);
+                                }}
+                                className={`flex flex-col items-center justify-center py-2 rounded-xl border text-xs font-semibold transition-all duration-300 ${
+                                  currency === curr.code
+                                    ? "border-primary-500 bg-primary-500/10 text-primary-500 shadow-glow-sm"
+                                    : "border-transparent hover:bg-primary-50/50 dark:hover:bg-navy-800 text-navy-700 dark:text-navy-200"
+                                }`}
+                              >
+                                <span className="text-sm">{curr.symbol}</span>
+                                <span className="text-[10px] text-navy-400 dark:text-navy-300 font-normal">{curr.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="bg-warning-500/5 border border-warning-500/20 rounded-xl p-2.5 text-center">
+                            <p className="text-[11px] text-navy-500 dark:text-navy-300 mb-2">
+                              {t("settings.currencyLoginRequired")}
+                            </p>
+                            <Link
+                              href="/auth/login"
+                              onClick={() => setIsSettingsOpen(false)}
+                              className="inline-flex items-center gap-1 text-[11px] font-bold text-primary-500 hover:text-primary-600 transition-colors"
+                            >
+                              {language === "id" ? "Masuk Sekarang" : "Sign In Now"} &rarr;
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
 
             {/* Auth Buttons */}
@@ -176,6 +301,89 @@ export function Navbar() {
                     <MobileNavLink href="/auth/register" onClick={() => setMobileOpen(false)}>{t("nav.signUp")}</MobileNavLink>
                   </>
                 )}
+              </div>
+
+              {/* Mobile Quick Settings */}
+              <div className="border-t border-primary-100/10 dark:border-navy-500/30 mt-2 pt-3 px-4">
+                <p className="text-xs font-bold text-navy-400 dark:text-navy-300 uppercase tracking-wider mb-2">
+                  {language === "id" ? "Pengaturan Cepat" : "Quick Settings"}
+                </p>
+                <div className="flex flex-col gap-3">
+                  {/* Language Selector */}
+                  <div>
+                    <span className="text-xs font-medium text-navy-600 dark:text-navy-300 block mb-1">
+                      {language === "id" ? "Bahasa" : "Language"}
+                    </span>
+                    <div className="flex gap-1">
+                      {[
+                        { code: "en", label: "EN", flag: "🇺🇸" },
+                        { code: "id", label: "ID", flag: "🇮🇩" },
+                        { code: "es", label: "ES", flag: "🇪🇸" },
+                        { code: "fr", label: "FR", flag: "🇫🇷" },
+                      ].map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            setLanguage(lang.code as any);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                            language === lang.code
+                              ? "border-primary-500 bg-primary-500/10 text-primary-500"
+                              : "border-primary-100/20 dark:border-navy-600 text-navy-700 dark:text-navy-200"
+                          }`}
+                        >
+                          <span>{lang.flag}</span>
+                          <span>{lang.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Currency Selector */}
+                  <div>
+                    <span className="text-xs font-medium text-navy-600 dark:text-navy-300 flex items-center gap-1 mb-1">
+                      {language === "id" ? "Mata Uang" : "Currency"}
+                      {!session && (
+                        <span className="text-[9px] font-medium text-warning-500 bg-warning-500/10 px-1.5 py-0.5 rounded ml-auto">
+                          {language === "id" ? "Perlu Login" : "Auth Required"}
+                        </span>
+                      )}
+                    </span>
+                    {session ? (
+                      <div className="flex gap-1">
+                        {[
+                          { code: "USD", symbol: "$" },
+                          { code: "IDR", symbol: "Rp" },
+                          { code: "EUR", symbol: "€" },
+                        ].map((curr) => (
+                          <button
+                            key={curr.code}
+                            onClick={async () => {
+                              setCurrency(curr.code as any);
+                              const formData = new FormData();
+                              formData.append("currency", curr.code);
+                              await updateSettings(null, formData);
+                            }}
+                            className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
+                              currency === curr.code
+                                ? "border-primary-500 bg-primary-500/10 text-primary-500"
+                                : "border-primary-100/20 dark:border-navy-600 text-navy-700 dark:text-navy-200"
+                            }`}
+                          >
+                            <span>{curr.symbol}</span>
+                            <span>{curr.code}</span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="bg-warning-500/5 border border-warning-500/20 rounded-xl p-2.5 text-center">
+                        <p className="text-[10px] text-navy-500 dark:text-navy-300">
+                          {t("settings.currencyLoginRequired")}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

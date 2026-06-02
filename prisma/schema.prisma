@@ -57,6 +57,7 @@ model User {
   role          Role      @default(USER)
   language      String    @default("en")
   region        String    @default("US")
+  currency      String    @default("USD")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

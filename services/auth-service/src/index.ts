@@ -119,7 +119,7 @@ const app = new Elysia()
     if (!user) { set.status = 401; return { error: "Not authenticated" }; }
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
     if (!dbUser) { set.status = 404; return { error: "User not found" }; }
-    return { id: dbUser.id, email: dbUser.email, name: dbUser.name, image: dbUser.image, role: dbUser.role, createdAt: dbUser.createdAt, language: dbUser.language, region: dbUser.region };
+    return { id: dbUser.id, email: dbUser.email, name: dbUser.name, image: dbUser.image, role: dbUser.role, createdAt: dbUser.createdAt, language: dbUser.language, region: dbUser.region, currency: dbUser.currency };
   })
 
   // PATCH /api/auth/profile — Update profile
@@ -127,15 +127,16 @@ const app = new Elysia()
     if (!user) { set.status = 401; return { error: "Not authenticated" }; }
     const updated = await prisma.user.update({
       where: { id: user.id },
-      data: { name: body.name, image: body.image, language: body.language, region: body.region },
+      data: { name: body.name, image: body.image, language: body.language, region: body.region, currency: body.currency },
     });
-    return { id: updated.id, email: updated.email, name: updated.name, image: updated.image, language: updated.language, region: updated.region };
+    return { id: updated.id, email: updated.email, name: updated.name, image: updated.image, language: updated.language, region: updated.region, currency: updated.currency };
   }, {
     body: t.Object({
       name: t.Optional(t.String({ minLength: 2 })),
       image: t.Optional(t.String()),
       language: t.Optional(t.String()),
       region: t.Optional(t.String()),
+      currency: t.Optional(t.String()),
     }),
   })
 
@@ -144,22 +145,23 @@ const app = new Elysia()
     if (!user) { set.status = 401; return { error: "Not authenticated" }; }
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
     if (!dbUser) { set.status = 404; return { error: "User not found" }; }
-    return { id: dbUser.id, email: dbUser.email, name: dbUser.name, image: dbUser.image, role: dbUser.role, createdAt: dbUser.createdAt, language: dbUser.language, region: dbUser.region };
+    return { id: dbUser.id, email: dbUser.email, name: dbUser.name, image: dbUser.image, role: dbUser.role, createdAt: dbUser.createdAt, language: dbUser.language, region: dbUser.region, currency: dbUser.currency };
   })
 
   .patch("/api/user/profile", async ({ user, body, set }) => {
     if (!user) { set.status = 401; return { error: "Not authenticated" }; }
     const updated = await prisma.user.update({
       where: { id: user.id },
-      data: { name: body.name, image: body.image, language: body.language, region: body.region },
+      data: { name: body.name, image: body.image, language: body.language, region: body.region, currency: body.currency },
     });
-    return { id: updated.id, email: updated.email, name: updated.name, image: updated.image, language: updated.language, region: updated.region };
+    return { id: updated.id, email: updated.email, name: updated.name, image: updated.image, language: updated.language, region: updated.region, currency: updated.currency };
   }, {
     body: t.Object({
       name: t.Optional(t.String({ minLength: 2 })),
       image: t.Optional(t.String()),
       language: t.Optional(t.String()),
       region: t.Optional(t.String()),
+      currency: t.Optional(t.String()),
     }),
   })
 
