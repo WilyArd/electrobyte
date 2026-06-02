@@ -1,0 +1,4 @@
+$kind: http-request
+method: GET
+url: '{{product_service_url}}/api/products/{{product_id}}/related'
+order: 4000

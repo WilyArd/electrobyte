@@ -1,0 +1,15 @@
+$kind: http-request
+method: GET
+url: '{{product_service_url}}/api/products'
+order: 1000
+queryParams:
+  - key: q
+    value: laptop
+  - key: category
+    value: ALL
+  - key: sort
+    value: rating
+  - key: page
+    value: '1'
+  - key: limit
+    value: '12'

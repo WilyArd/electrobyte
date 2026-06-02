@@ -1,0 +1,7 @@
+$kind: http-request
+method: DELETE
+url: '{{product_service_url}}/api/admin/products/{{product_id}}'
+order: 8000
+headers:
+  - key: Authorization
+    value: 'Bearer {{admin_token}}'

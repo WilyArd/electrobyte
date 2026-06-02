@@ -1,0 +1,7 @@
+$kind: http-request
+method: DELETE
+url: '{{product_service_url}}/api/products/{{product_id}}/reviews/{{review_id}}'
+order: 11000
+headers:
+  - key: Authorization
+    value: 'Bearer {{user_token}}'

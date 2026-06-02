@@ -1,0 +1,7 @@
+$kind: http-request
+method: GET
+url: '{{cart_service_url}}/api/cart/count'
+order: 2000
+headers:
+  - key: Authorization
+    value: 'Bearer {{user_token}}'

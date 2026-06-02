@@ -1,0 +1,7 @@
+$kind: http-request
+method: GET
+url: '{{admin_service_url}}/api/admin/stats'
+order: 2000
+headers:
+  - key: Authorization
+    value: 'Bearer {{admin_token}}'

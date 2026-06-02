@@ -1,0 +1,17 @@
+$kind: http-request
+method: PATCH
+url: '{{auth_service_url}}/api/auth/profile'
+order: 7000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{user_token}}'
+body:
+  type: json
+  content: |-
+    {
+      "name": "Updated Demo User",
+      "language": "en",
+      "region": "ID"
+    }

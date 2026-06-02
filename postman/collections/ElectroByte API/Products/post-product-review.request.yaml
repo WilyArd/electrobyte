@@ -1,0 +1,16 @@
+$kind: http-request
+method: POST
+url: '{{product_service_url}}/api/products/{{product_id}}/reviews'
+order: 9000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{user_token}}'
+body:
+  type: json
+  content: |-
+    {
+      "rating": 5,
+      "comment": "Great product and fast delivery."
+    }

@@ -1,0 +1,7 @@
+$kind: http-request
+method: GET
+url: '{{product_service_url}}/api/admin/products'
+order: 5000
+headers:
+  - key: Authorization
+    value: 'Bearer {{admin_token}}'

@@ -1,0 +1,7 @@
+$kind: http-request
+method: GET
+url: '{{admin_service_url}}/api/admin/users'
+order: 3000
+headers:
+  - key: Authorization
+    value: 'Bearer {{admin_token}}'

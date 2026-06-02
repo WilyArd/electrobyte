@@ -2,8 +2,6 @@
 workspace:
   id: b940c437-215d-42d3-8c5e-e5d56beb1cf2
 
-# All resources in the `postman/` folder are automatically registered in Local View.
-# Point to additional files outside the `postman/` folder to register them individually. Example:
-#localResources:
-#  collections:
-#    - ../tests/E2E Test Collection/
+localResources:
+  collections:
+    - ../ElectroByte-API.postman_collection.json

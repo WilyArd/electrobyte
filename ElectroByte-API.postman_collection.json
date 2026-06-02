@@ -1,0 +1,514 @@
+{
+  "info": {
+    "name": "ElectroByte API",
+    "_postman_id": "electrobyte-microservices",
+    "description": "Complete API collection for ElectroByte e-commerce microservices.\n\n## Setup\n1. Set `base_url_auth` = http://localhost:4001\n2. Set `base_url_product` = http://localhost:4002\n3. Set `base_url_cart` = http://localhost:4003\n4. Set `base_url_order` = http://localhost:4004\n5. Set `base_url_admin` = http://localhost:4005\n\nAfter login, the `token` variable will be auto-set by the login request's test script.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url_auth",    "value": "http://localhost:4001", "type": "string" },
+    { "key": "base_url_product", "value": "http://localhost:4002", "type": "string" },
+    { "key": "base_url_cart",    "value": "http://localhost:4003", "type": "string" },
+    { "key": "base_url_order",   "value": "http://localhost:4004", "type": "string" },
+    { "key": "base_url_admin",   "value": "http://localhost:4005", "type": "string" },
+    { "key": "token",            "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth Service (4001)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_auth}}/api/health",
+            "description": "Check if auth service is running"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_auth}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Login (Verify)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('Token saved!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_auth}}/api/auth/verify",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@electrobyte.com\",\n  \"password\": \"user123\"\n}"
+            },
+            "description": "Login with email/password. Token will be auto-saved to `token` variable."
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_auth}}/api/user/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get current user profile (requires token)"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url_auth}}/api/user/profile",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"08123456789\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Payment Methods",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_auth}}/api/user/payment-methods",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add Payment Method",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_auth}}/api/user/payment-methods",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"BANK_TRANSFER\",\n  \"bankName\": \"BCA\",\n  \"accountNumber\": \"1234567890\",\n  \"accountName\": \"Test User\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Product Service (4002)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/health"
+          }
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url_product}}/api/products?page=1&limit=12",
+              "host": ["{{base_url_product}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "12" },
+                { "key": "q", "value": "", "disabled": true },
+                { "key": "category", "value": "", "disabled": true },
+                { "key": "sort", "value": "newest", "disabled": true }
+              ]
+            },
+            "description": "List products with pagination. Optional: q (search), category, sort (newest/price_asc/price_desc)"
+          }
+        },
+        {
+          "name": "Get Featured Products",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/products/featured"
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/products/PRODUCT_ID_HERE",
+            "description": "Replace PRODUCT_ID_HERE with an actual product ID"
+          }
+        },
+        {
+          "name": "Get Related Products",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/products/PRODUCT_ID_HERE/related"
+          }
+        },
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/products/wishlist",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add to Wishlist",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_product}}/api/products/wishlist",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"PRODUCT_ID_HERE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Product Reviews",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/products/PRODUCT_ID_HERE/reviews"
+          }
+        },
+        {
+          "name": "Post Review",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_product}}/api/products/PRODUCT_ID_HERE/reviews",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Produk sangat bagus!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Get All Products",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_product}}/api/admin/products",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "[Admin] Create Product",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_product}}/api/admin/products",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"RTX 5090 Ti\",\n  \"description\": \"GPU terbaru 2025\",\n  \"price\": 25000000,\n  \"stock\": 10,\n  \"categoryId\": \"CATEGORY_ID_HERE\",\n  \"brand\": \"NVIDIA\",\n  \"sku\": \"GPU-RTX5090\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Update Product",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url_product}}/api/admin/products/PRODUCT_ID_HERE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 22000000,\n  \"stock\": 15\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url_product}}/api/admin/products/PRODUCT_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛒 Cart Service (4003)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_cart}}/api/health"
+          }
+        },
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_cart}}/api/cart",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Cart Count",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_cart}}/api/cart/count",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_cart}}/api/cart",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"PRODUCT_ID_HERE\",\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Cart Item Quantity",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url_cart}}/api/cart/CART_ITEM_ID_HERE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Cart Item",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url_cart}}/api/cart/CART_ITEM_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url_cart}}/api/cart",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Order Service (4004)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_order}}/api/health"
+          }
+        },
+        {
+          "name": "Validate Coupon",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_order}}/api/orders/coupons/validate",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"DISKON10\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_order}}/api/orders/checkout",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"productId\": \"PRODUCT_ID_HERE\", \"quantity\": 1, \"price\": 5000000 }\n  ],\n  \"shippingAddress\": {\n    \"street\": \"Jl. Merdeka No. 1\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postalCode\": \"10110\"\n  },\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"couponCode\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_order}}/api/user/orders",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_order}}/api/orders/ORDER_ID_HERE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "[Admin] Get All Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_order}}/api/admin/orders",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "[Admin] Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url_order}}/api/admin/orders/ORDER_ID_HERE/status",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHIPPED\"\n}"
+            },
+            "description": "Status: PENDING | PROCESSING | SHIPPED | DELIVERED | CANCELLED"
+          }
+        },
+        {
+          "name": "[Admin] Get Coupons",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_order}}/api/admin/coupons",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "[Admin] Create Coupon",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_order}}/api/admin/coupons",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"HEMAT20\",\n  \"discountPercent\": 20,\n  \"maxUses\": 100,\n  \"expiresAt\": \"2025-12-31T23:59:59Z\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Admin Service (4005)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_admin}}/api/health"
+          }
+        },
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('Admin token saved!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url_admin}}/api/admin/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@electrobyte.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "description": "Default admin: admin@electrobyte.com / admin123"
+          }
+        },
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_admin}}/api/admin/stats",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url_admin}}/api/admin/users",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Change User Role",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url_admin}}/api/admin/users/USER_ID_HERE/role",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}",
+              "description": "role: USER | ADMIN"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

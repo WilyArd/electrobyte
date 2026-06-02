@@ -1,0 +1,15 @@
+$kind: http-request
+method: PATCH
+url: '{{admin_service_url}}/api/admin/users/{{user_id}}/role'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{admin_token}}'
+body:
+  type: json
+  content: |-
+    {
+      "role": "ADMIN"
+    }

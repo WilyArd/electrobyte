@@ -1,0 +1,7 @@
+$kind: http-request
+method: PATCH
+url: '{{auth_service_url}}/api/user/payment-methods/{{payment_method_id}}/default'
+order: 7000
+headers:
+  - key: Authorization
+    value: 'Bearer {{user_token}}'

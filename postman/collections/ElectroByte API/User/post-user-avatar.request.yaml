@@ -1,0 +1,13 @@
+$kind: http-request
+method: POST
+url: '{{auth_service_url}}/api/user/avatar'
+order: 3000
+headers:
+  - key: Authorization
+    value: 'Bearer {{user_token}}'
+body:
+  type: formdata
+  content:
+    - key: avatar
+      type: file
+      src: '/absolute/path/to/avatar.png'

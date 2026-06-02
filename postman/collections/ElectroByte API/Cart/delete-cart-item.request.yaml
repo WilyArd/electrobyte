@@ -1,0 +1,7 @@
+$kind: http-request
+method: DELETE
+url: '{{cart_service_url}}/api/cart/{{cart_item_id}}'
+order: 6000
+headers:
+  - key: Authorization
+    value: 'Bearer {{user_token}}'

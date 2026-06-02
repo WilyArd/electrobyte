@@ -1,0 +1,20 @@
+$kind: http-request
+method: POST
+url: '{{order_service_url}}/api/orders/checkout'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{user_token}}'
+body:
+  type: json
+  content: |-
+    {
+      "shippingName": "Demo User",
+      "shippingEmail": "{{user_email}}",
+      "shippingAddress": "123 Example Street",
+      "shippingCity": "Jakarta",
+      "shippingZip": "12345",
+      "couponCode": "WELCOME10"
+    }

@@ -1,0 +1,4 @@
+$kind: http-request
+method: GET
+url: '{{product_service_url}}/api/products/featured'
+order: 2000
