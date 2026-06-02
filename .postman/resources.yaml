@@ -5,3 +5,9 @@ workspace:
 localResources:
   collections:
     - ../ElectroByte-API.postman_collection.json
+  docs:
+    - ../frontend/README.md
+    - ../backend/README.md
+    - ../admin/README.md
+    - ../README.md
+    - ../AGENTS.md
