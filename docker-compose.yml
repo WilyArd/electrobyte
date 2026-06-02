@@ -35,6 +35,28 @@ services:
       start_period: 15s
 
   # ─────────────────────────────────────────────
+  # Traefik API Gateway & Reverse Proxy (Port 80)
+  # ─────────────────────────────────────────────
+  traefik:
+    image: traefik:v3.7
+    container_name: electrobyte-traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "3000:80"     # Traefik HTTP Gateway on Port 3000 (Storefront & API Gateway)
+      - "8085:8080"   # Traefik Dashboard (Dev only - host port 8085)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      - DOCKER_API_VERSION=1.40
+    networks:
+      - electrobyte-net
+
+  # ─────────────────────────────────────────────
   # 2. Auth Service (Port 4001)
   # ─────────────────────────────────────────────
   auth-service:
@@ -70,6 +92,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      # Route specific auth-service Elysia endpoints (NOT NextAuth session/callback)
+      - "traefik.http.routers.auth-service.rule=PathPrefix(`/api/auth/register`) || PathPrefix(`/api/auth/verify`) || PathPrefix(`/api/auth/oauth-user`) || PathPrefix(`/api/auth/user`) || PathPrefix(`/api/auth/user-by-id`) || PathPrefix(`/api/auth/profile`) || PathPrefix(`/api/user`)"
+      - "traefik.http.routers.auth-service.entrypoints=web"
+      - "traefik.http.routers.auth-service.priority=100"
+      - "traefik.http.services.auth-service.loadbalancer.server.port=4001"
 
   # ─────────────────────────────────────────────
   # 3. Product Service (Port 4002)
@@ -106,6 +135,11 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product-service.rule=PathPrefix(`/api/products`) || PathPrefix(`/api/wishlist`) || PathPrefix(`/api/reviews`)"
+      - "traefik.http.routers.product-service.entrypoints=web"
+      - "traefik.http.services.product-service.loadbalancer.server.port=4002"
 
   # ─────────────────────────────────────────────
   # 4. Cart Service (Port 4003)
@@ -137,6 +171,11 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cart-service.rule=PathPrefix(`/api/cart`)"
+      - "traefik.http.routers.cart-service.entrypoints=web"
+      - "traefik.http.services.cart-service.loadbalancer.server.port=4003"
 
   # ─────────────────────────────────────────────
   # 5. Order Service (Port 4004)
@@ -171,6 +210,11 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order-service.rule=PathPrefix(`/api/orders`) || PathPrefix(`/api/user/orders`)"
+      - "traefik.http.routers.order-service.entrypoints=web"
+      - "traefik.http.services.order-service.loadbalancer.server.port=4004"
 
   # ─────────────────────────────────────────────
   # 6. Admin Service (Port 4005)
@@ -202,6 +246,11 @@ services:
         condition: service_healthy
       order-service:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin-service.rule=PathPrefix(`/api/admin`)"
+      - "traefik.http.routers.admin-service.entrypoints=web"
+      - "traefik.http.services.admin-service.loadbalancer.server.port=4005"
 
   # ─────────────────────────────────────────────
   # 7. Frontend Storefront (Next.js — Port 3000)
@@ -214,8 +263,6 @@ services:
     restart: unless-stopped
     networks:
       - electrobyte-net
-    ports:
-      - "3000:3000"
     env_file:
       - ./frontend/.env
     environment:
@@ -236,6 +283,12 @@ services:
         condition: service_healthy
       order-service:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
   # ─────────────────────────────────────────────
   # 8. Admin Panel (Vite + React — Port 5000)
@@ -252,6 +305,11 @@ services:
       - "5000:80"
     depends_on:
       - admin-service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.localhost`)"
+      - "traefik.http.routers.admin.entrypoints=web"
+      - "traefik.http.services.admin.loadbalancer.server.port=80"
 
 volumes:
   minio_data:

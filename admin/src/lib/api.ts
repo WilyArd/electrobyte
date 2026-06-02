@@ -1,7 +1,14 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-const BACKEND_URL = 'http://localhost:4000';
+// Support dynamic API URLs via environment variables or current window origin
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined'
+    ? window.location.port === '5000'
+      ? 'http://localhost:4000'
+      : window.location.origin
+    : 'http://localhost:4000');
 
 export const api = axios.create({
   baseURL: BACKEND_URL,
