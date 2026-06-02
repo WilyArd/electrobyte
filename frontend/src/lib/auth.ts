@@ -4,7 +4,7 @@ import Google from "next-auth/providers/google";
 import * as jose from "jose";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:4001";
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || "dev-secret-key-electrobyte-2026";
+const NEXTAUTH_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "dev-secret-key-electrobyte-2026";
 
 // Derive signing key using HKDF — matches backend auth middleware exactly
 async function getSigningKey(): Promise<Uint8Array> {
@@ -19,6 +19,7 @@ async function getSigningKey(): Promise<Uint8Array> {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   session: {
     strategy: "jwt",
   },
@@ -29,6 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      checks: [], // Disable PKCE + nonce — fixes InvalidCheck error behind Traefik HTTP reverse proxy
     }),
     Credentials({
       name: "credentials",
