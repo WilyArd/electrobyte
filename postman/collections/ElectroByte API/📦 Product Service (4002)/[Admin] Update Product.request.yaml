@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url_product}}/api/admin/products/PRODUCT_ID_HERE"
+method: PUT
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "price": 22000000,
+      "stock": 15
+    }
+order: 12000

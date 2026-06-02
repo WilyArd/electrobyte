@@ -1,7 +1,0 @@
-$kind: http-request
-method: DELETE
-url: '{{auth_service_url}}/api/user/payment-methods/{{payment_method_id}}'
-order: 6000
-headers:
-  - key: Authorization
-    value: 'Bearer {{user_token}}'

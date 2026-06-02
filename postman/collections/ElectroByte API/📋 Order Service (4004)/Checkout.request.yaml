@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{base_url_order}}/api/orders/checkout"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "items": [
+        { "productId": "PRODUCT_ID_HERE", "quantity": 1, "price": 5000000 }
+      ],
+      "shippingAddress": {
+        "street": "Jl. Merdeka No. 1",
+        "city": "Jakarta",
+        "province": "DKI Jakarta",
+        "postalCode": "10110"
+      },
+      "paymentMethod": "BANK_TRANSFER",
+      "couponCode": null
+    }
+order: 3000

@@ -1,0 +1,14 @@
+$kind: http-request
+description: "Status: PENDING | PROCESSING | SHIPPED | DELIVERED | CANCELLED"
+url: "{{base_url_order}}/api/admin/orders/ORDER_ID_HERE/status"
+method: PATCH
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "SHIPPED"
+    }
+order: 7000

@@ -1,7 +1,0 @@
-$kind: http-request
-method: DELETE
-url: '{{product_service_url}}/api/products/wishlist/{{product_id}}'
-order: 7000
-headers:
-  - key: Authorization
-    value: 'Bearer {{user_token}}'

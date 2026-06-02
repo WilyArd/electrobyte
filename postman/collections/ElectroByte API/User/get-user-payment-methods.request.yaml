@@ -1,7 +1,0 @@
-$kind: http-request
-method: GET
-url: '{{auth_service_url}}/api/user/payment-methods'
-order: 4000
-headers:
-  - key: Authorization
-    value: 'Bearer {{user_token}}'

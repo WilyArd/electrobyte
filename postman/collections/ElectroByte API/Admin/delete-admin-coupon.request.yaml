@@ -1,7 +1,0 @@
-$kind: http-request
-method: DELETE
-url: '{{order_service_url}}/api/admin/coupons/{{coupon_id}}'
-order: 14000
-headers:
-  - key: Authorization
-    value: 'Bearer {{admin_token}}'

@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url_auth}}/api/user/payment-methods"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "type": "BANK_TRANSFER",
+      "bankName": "BCA",
+      "accountNumber": "1234567890",
+      "accountName": "Test User"
+    }
+order: 7000

@@ -1,4 +1,0 @@
-$kind: http-request
-method: GET
-url: '{{admin_service_url}}/api/health'
-order: 6000

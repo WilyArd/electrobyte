@@ -1,4 +1,0 @@
-$kind: http-request
-method: GET
-url: '{{auth_service_url}}/api/auth/user/{{user_email}}'
-order: 4000

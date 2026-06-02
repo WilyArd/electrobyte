@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url_order}}/api/admin/coupons"
+method: GET
+headers:
+  Authorization: Bearer {{token}}
+order: 8000

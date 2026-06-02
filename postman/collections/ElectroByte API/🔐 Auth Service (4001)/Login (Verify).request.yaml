@@ -1,0 +1,23 @@
+$kind: http-request
+description: Login with email/password. Token will be auto-saved to `token` variable.
+url: "{{base_url_auth}}/api/auth/verify"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "user@electrobyte.com",
+      "password": "user123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const res = pm.response.json();
+      if (res.token) {
+        pm.collectionVariables.set('token', res.token);
+        console.log('Token saved!');
+      }
+    language: text/javascript
+order: 3000

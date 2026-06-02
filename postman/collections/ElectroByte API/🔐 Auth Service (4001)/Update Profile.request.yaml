@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url_auth}}/api/user/profile"
+method: PATCH
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Updated Name",
+      "phone": "08123456789"
+    }
+order: 5000

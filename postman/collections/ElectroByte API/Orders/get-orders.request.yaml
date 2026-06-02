@@ -1,7 +1,0 @@
-$kind: http-request
-method: GET
-url: '{{order_service_url}}/api/orders'
-order: 3000
-headers:
-  - key: Authorization
-    value: 'Bearer {{user_token}}'

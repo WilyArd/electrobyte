@@ -1,0 +1,23 @@
+$kind: http-request
+description: "Default admin: admin@electrobyte.com / admin123"
+url: "{{base_url_admin}}/api/admin/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "admin@electrobyte.com",
+      "password": "admin123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const res = pm.response.json();
+      if (res.token) {
+        pm.collectionVariables.set('token', res.token);
+        console.log('Admin token saved!');
+      }
+    language: text/javascript
+order: 2000

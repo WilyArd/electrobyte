@@ -1,0 +1,15 @@
+$kind: http-request
+description: Register a new user account
+url: "{{base_url_auth}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Test User",
+      "email": "test@example.com",
+      "password": "password123"
+    }
+order: 2000

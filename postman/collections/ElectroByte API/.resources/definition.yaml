@@ -1,52 +1,19 @@
 $kind: collection
-name: 'ElectroByte API'
-description: 'Postman collection generated from the ElectroByte project services and route definitions.'
+description: |-
+  Complete API collection for ElectroByte e-commerce microservices.
+
+  ## Setup
+  1. Set `base_url_auth` = http://localhost:4001
+  2. Set `base_url_product` = http://localhost:4002
+  3. Set `base_url_cart` = http://localhost:4003
+  4. Set `base_url_order` = http://localhost:4004
+  5. Set `base_url_admin` = http://localhost:4005
+
+  After login, the `token` variable will be auto-set by the login request's test script.
 variables:
-  - key: base_url
-    value: 'http://localhost:4000'
-    description: 'Frontend/API gateway base URL if running through a single app entrypoint.'
-  - key: auth_service_url
-    value: 'http://localhost:4001'
-    description: 'Auth service base URL.'
-  - key: product_service_url
-    value: 'http://localhost:4002'
-    description: 'Product service base URL.'
-  - key: cart_service_url
-    value: 'http://localhost:4003'
-    description: 'Cart service base URL.'
-  - key: order_service_url
-    value: 'http://localhost:4004'
-    description: 'Order service base URL.'
-  - key: admin_service_url
-    value: 'http://localhost:4005'
-    description: 'Admin service base URL.'
-  - key: user_email
-    value: 'user@electrobyte.com'
-    description: 'Seeded demo user email.'
-  - key: user_password
-    value: 'user123'
-    description: 'Seeded demo user password.'
-  - key: admin_email
-    value: 'admin@electrobyte.com'
-    description: 'Seeded admin email.'
-  - key: admin_password
-    value: 'admin123'
-    description: 'Seeded admin password.'
-  - key: user_token
-    value: ''
-    description: 'Bearer token for authenticated user requests.'
-  - key: admin_token
-    value: ''
-    description: 'Bearer token for admin requests.'
-  - key: product_id
-    value: 'replace-with-product-id'
-  - key: cart_item_id
-    value: 'replace-with-cart-item-id'
-  - key: order_id
-    value: 'replace-with-order-id'
-  - key: review_id
-    value: 'replace-with-review-id'
-  - key: coupon_id
-    value: 'replace-with-coupon-id'
-  - key: user_id
-    value: 'replace-with-user-id'
+  base_url_auth: http://localhost:4001
+  base_url_product: http://localhost:4002
+  base_url_cart: http://localhost:4003
+  base_url_order: http://localhost:4004
+  base_url_admin: http://localhost:4005
+  token: ""

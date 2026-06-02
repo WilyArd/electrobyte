@@ -1,0 +1,19 @@
+$kind: http-request
+description: "List products with pagination. Optional: q (search), category, sort (newest/price_asc/price_desc)"
+url: "{{base_url_product}}/api/products?page=1&limit=12"
+method: GET
+queryParams:
+  - key: page
+    value: "1"
+  - key: limit
+    value: "12"
+  - key: q
+    value: ""
+    disabled: true
+  - key: category
+    value: ""
+    disabled: true
+  - key: sort
+    value: newest
+    disabled: true
+order: 2000

@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url_product}}/api/products/wishlist"
+method: GET
+headers:
+  Authorization: Bearer {{token}}
+order: 6000

@@ -1,0 +1,5 @@
+$kind: http-request
+description: Replace PRODUCT_ID_HERE with an actual product ID
+url: "{{base_url_product}}/api/products/PRODUCT_ID_HERE"
+method: GET
+order: 4000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url_cart}}/api/cart/CART_ITEM_ID_HERE"
+method: PATCH
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "quantity": 2
+    }
+order: 5000

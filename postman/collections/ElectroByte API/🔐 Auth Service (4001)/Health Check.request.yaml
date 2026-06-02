@@ -1,0 +1,5 @@
+$kind: http-request
+description: Check if auth service is running
+url: "{{base_url_auth}}/api/health"
+method: GET
+order: 1000

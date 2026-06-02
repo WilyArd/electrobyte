@@ -11,3 +11,7 @@ localResources:
     - ../admin/README.md
     - ../README.md
     - ../AGENTS.md
+
+cloudResources:
+  collections:
+    ../postman/collections/ElectroByte API: 966a37b7-dc6a-434c-a6dd-c7934c373a85

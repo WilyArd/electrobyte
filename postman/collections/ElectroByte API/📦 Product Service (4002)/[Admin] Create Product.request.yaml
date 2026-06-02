@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url_product}}/api/admin/products"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "RTX 5090 Ti",
+      "description": "GPU terbaru 2025",
+      "price": 25000000,
+      "stock": 10,
+      "categoryId": "CATEGORY_ID_HERE",
+      "brand": "NVIDIA",
+      "sku": "GPU-RTX5090"
+    }
+order: 11000
