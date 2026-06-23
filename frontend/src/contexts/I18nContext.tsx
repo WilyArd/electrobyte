@@ -54,11 +54,15 @@ export const I18nProvider = ({
     setLanguageState(lang);
     if (typeof window !== "undefined") {
       localStorage.setItem("electrobyte-lang", lang);
-      
-      // Auto switch currency to default for that language if not explicitly overridden
-      const defaultCurr = getDefaultCurrencyForLanguage(lang);
-      setCurrencyState(defaultCurr);
-      localStorage.setItem("electrobyte-currency", defaultCurr);
+
+      // Only auto-switch currency if user has NOT explicitly set one
+      // (i.e., no currency key in localStorage yet — first visit / guest)
+      const hasSavedCurrency = localStorage.getItem("electrobyte-currency");
+      if (!hasSavedCurrency) {
+        const defaultCurr = getDefaultCurrencyForLanguage(lang);
+        setCurrencyState(defaultCurr);
+        localStorage.setItem("electrobyte-currency", defaultCurr);
+      }
     }
   };
 

@@ -7,14 +7,21 @@ export async function updateSettings(
   _prevState: any,
   formData: FormData
 ) {
-  const language = formData.get("language") as string;
-  const region = formData.get("region") as string;
+  const language = formData.get("language") as string | null;
+  const region = formData.get("region") as string | null;
+  const currency = formData.get("currency") as string | null;
+
+  // Build payload with only the fields that were provided
+  const payload: Record<string, string> = {};
+  if (language) payload.language = language;
+  if (region) payload.region = region;
+  if (currency) payload.currency = currency;
 
   try {
     const res = await apiFetch("/api/user/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ language, region }),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
